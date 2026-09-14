@@ -1,0 +1,137 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A business owner using the app",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "businessName": { "type": "string" },
+        "gstNumber": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "email", "createdAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "An item in the inventory",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "purchasePrice": { "type": "number" },
+        "sellingPrice": { "type": "number" },
+        "stockQuantity": { "type": "number" },
+        "lowStockThreshold": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "purchasePrice", "sellingPrice", "stockQuantity", "createdAt"]
+    },
+    "Party": {
+      "title": "Party",
+      "description": "A customer or supplier",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "mobile": { "type": "string" },
+        "address": { "type": "string" },
+        "type": { "type": "string", "enum": ["customer", "supplier"] },
+        "balance": { "type": "number", "description": "Positive means they owe us (receivable), negative means we owe them (payable)" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "type", "balance", "createdAt"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "A sales invoice",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "partyId": { "type": "string" },
+        "partyName": { "type": "string" },
+        "totalAmount": { "type": "number" },
+        "discount": { "type": "number" },
+        "finalAmount": { "type": "number" },
+        "paymentMode": { "type": "string", "enum": ["cash", "upi", "bank", "credit"] },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productId": { "type": "string" },
+              "name": { "type": "string" },
+              "quantity": { "type": "number" },
+              "price": { "type": "number" }
+            }
+          }
+        },
+        "date": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "totalAmount", "finalAmount", "paymentMode", "items", "date", "createdAt"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "A business expense",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "category": { "type": "string" },
+        "amount": { "type": "number" },
+        "paymentMode": { "type": "string", "enum": ["cash", "upi", "bank"] },
+        "date": { "type": "string", "format": "date-time" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "category", "amount", "paymentMode", "date", "createdAt"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "A payment received or given to a party",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "partyId": { "type": "string" },
+        "partyName": { "type": "string" },
+        "type": { "type": "string", "enum": ["in", "out"] },
+        "amount": { "type": "number" },
+        "paymentMode": { "type": "string", "enum": ["cash", "upi", "bank"] },
+        "date": { "type": "string", "format": "date-time" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "partyId", "type", "amount", "paymentMode", "date", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Business owner profiles"
+    },
+    "products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Inventory products"
+    },
+    "parties/{partyId}": {
+      "schema": { "$ref": "#/entities/Party" },
+      "description": "Customers and suppliers"
+    },
+    "sales/{saleId}": {
+      "schema": { "$ref": "#/entities/Sale" },
+      "description": "Sales records"
+    },
+    "expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Expense records"
+    },
+    "payments/{paymentId}": {
+      "schema": { "$ref": "#/entities/Payment" },
+      "description": "Payment records for credit/debit settlement"
+    }
+  }
+}

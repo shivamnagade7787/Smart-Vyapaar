@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // WARNING: These rules allow public read/write access.
+    // This is because the authentication process was removed per user request.
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
